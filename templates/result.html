@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        .graph-container { background-color: white; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #FFC300; }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border: 1px solid #ffeeba;
+            border-radius: 10px;
+            margin: 20px 0;
+            white-space: pre-line;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Analysis Results</h1>
+    
+    <div id="graphs-container">
+        <div id="time-series-graph" class="graph-container"></div> <!-- Time series graph -->
+        <div id="scatter-3d-graph" class="graph-container"></div>  <!-- Add this line -->
+        
+        <div id="co_vs_altitude" class="graph-container"></div> <!-- CO vs Altitude graph -->
+        <div id="h2_vs_altitude" class="graph-container"></div> <!-- H2 vs Altitude graph -->
+        <div id="dust_vs_altitude" class="graph-container"></div> <!-- Dust vs Altitude graph -->
+    </div>
+
+    <script>
+        fetch('/get_graphs').then(response => response.json()).then(data => {
+            Plotly.newPlot('time-series-graph', JSON.parse(data.time_series));
+            Plotly.newPlot('scatter-3d-graph', JSON.parse(data.scatter_3d));
+            
+            Plotly.newPlot('co_vs_altitude', JSON.parse(data.co_vs_altitude));
+            Plotly.newPlot('h2_vs_altitude', JSON.parse(data.h2_vs_altitude));
+            Plotly.newPlot('dust_vs_altitude', JSON.parse(data.dust_vs_altitude));
+        }).catch(error => {
+            console.error('Error loading graphs:', error);
+        });
+    </script>
+
+    {% if warning %}
+        <div class="alert-warning">{{ warning }}</div>
+    {% endif %}
+</body>
+</html>
